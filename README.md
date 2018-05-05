@@ -43,24 +43,6 @@ tcp.dest.port=1234
 выполняющего задание.
 XML пакет необходимо разобрать в объект $package.jaxb.Envelope используя технологию JAXB.
 
-Пример XML пакета:
-<Envelope xmlns:urn="wsapi:Payment" xmlns:uts="wsapi:Utils">
-<Body>
-<urn:sendPayment>
-<token>001234</token>
-<cardNumber>811626834823422</cardNumber>
-<requestId>2255086658</requestId>
-<amount>100000.00</amount>
-<currency>RUB</currency>
-<uts:account type="source">009037269229</uts:account>
-<uts:account type="destination">088127269229</uts:account>
-<page>1</page>
-<field id="0" value="0800" />
-<field id="11" value="000001" />
-<field id="70" value="301" />
-</urn:sendPayment>
-</Body>
-</Envelope>
 
 В случае ошибки при разборе XML пакета, вывести информацию предоставленную парсером на страницу ошибки и показать
 пользователю. Записать информацию в лог.
