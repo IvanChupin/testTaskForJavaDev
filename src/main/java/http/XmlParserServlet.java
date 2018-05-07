@@ -44,7 +44,7 @@ public class XmlParserServlet extends HttpServlet {
             resp.setContentType("text/html");
             resp.setCharacterEncoding("UTF-8");
             PrintWriter out = resp.getWriter();
-            out.println("Something wrong with XML"); //TODO: think about the error output
+            out.println("There is no content at all!");
         } else {
 
         }
