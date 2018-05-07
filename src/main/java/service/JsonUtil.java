@@ -18,8 +18,8 @@ public class JsonUtil {
         String jsonResult = "";
         try {
             jsonResult = mapper.writeValueAsString(envelope);
-        } catch (IOException e){
-            throw new IOException("there is a trouble in mapper while converting to JSON"+e.getMessage());
+        } catch (IOException e) {
+            throw new IOException("there is a trouble in mapper while converting to JSON" + e.getMessage());
         }
         return jsonResult;
     }

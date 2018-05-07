@@ -56,16 +56,23 @@ public class XmlParserServlet extends HttpServlet {
         } else {
             try {
                 envelope = CustomParserXMLtoObj.convertXMLtoObject(xml, Envelope.class);
+                //TODO: логирование, о преобразовании XML к Obj
             } catch (JAXBException e) {
                 out.println("There is an exception while parsing Your XML to Object, <br> ");
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
                 String sStackTrace = sw.toString();
-                out.println(sStackTrace);
+                out.println(sStackTrace);   //TODO:добавить логирование и придумать что-нибудь с передачей стектрейса пользователю
             }
             if (envelope != null) {
-                jsonString = new StringBuilder(JsonUtil.convertObjectToJSON(envelope));
+                try {
+                    jsonString = new StringBuilder(JsonUtil.convertObjectToJSON(envelope));
+                    //TODO: логирование об удачном преобразовании в JSON, записать результат в лог
+                    //TODO: отправить пользователю результат об успехе!
+                }catch (IOException e){
+                    out.println(e.getMessage());  //TODO:добавить логирование
+                }
             }
         }
 
