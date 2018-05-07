@@ -7,7 +7,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 
-class CustomParserXMLtoObj {
+public class CustomParserXMLtoObj {
 
 
     public static <T> T convertXMLtoObject(String xml, Class<T> type) throws JAXBException {

@@ -18,4 +18,7 @@ public class Account {
         return value;
     }
 
+    public String getType() {
+        return type;
+    }
 }
