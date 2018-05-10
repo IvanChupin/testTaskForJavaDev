@@ -1,7 +1,10 @@
 package http;
 
 
+import jdk.nashorn.internal.runtime.linker.Bootstrap;
 import model.Envelope;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import service.CustomParserXMLtoObj;
 import service.JsonUtil;
 
@@ -11,12 +14,25 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 @WebServlet("/")
 public class XmlParserServlet extends HttpServlet {
+    private static final Logger LOG = LogManager.getLogger("HttpServletLogger");
+    private String hostName;
+    private int portNumber;
+    private final String fixedMagic = "FFBBCCDD";
+
+    public XmlParserServlet(int tcpDestPort, String tcpDestAddress) {
+        portNumber = tcpDestPort;
+        hostName = tcpDestAddress;
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
@@ -52,33 +68,54 @@ public class XmlParserServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
         String xml = req.getParameter("xml");
         if (xml == null) {
+            LOG.info("There is no content at all!");
             out.println("There is no content at all!");
         } else {
             try {
                 envelope = CustomParserXMLtoObj.convertXMLtoObject(xml, Envelope.class);
-                //TODO: логирование, о преобразовании XML к Obj
+                LOG.info("Converting to XML successful");
             } catch (JAXBException e) {
-                out.println("There is an exception while parsing Your XML to Object, <br> ");
+                out.println("There is an exception while parsing your XML to Object <br> ");
+                LOG.error("There is an exception while parsing your XML to Object", e);
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
                 String sStackTrace = sw.toString();
-                out.println(sStackTrace);   //TODO:добавить логирование и придумать что-нибудь с передачей стектрейса пользователю
+                out.println(sStackTrace);
             }
             if (envelope != null) {
                 try {
                     jsonString = new StringBuilder(JsonUtil.convertObjectToJSON(envelope));
-                    //TODO: логирование об удачном преобразовании в JSON, записать результат в лог
-                    //TODO: отправить пользователю результат об успехе!
-                }catch (IOException e){
-                    out.println(e.getMessage());  //TODO:добавить логирование
+                    out.println("JSON successfully created" + jsonString);
+                    LOG.info(jsonString);
+                    createAndSendThroughTheSocket(jsonString.toString(), hostName, portNumber, out);
+                } catch (IOException e) {
+                    out.println(e.getMessage());
+                    LOG.error("!!!   There is an exception while converting Object to JSON   !!!", e);
                 }
+
             }
         }
 
     }
 
-//    convertXMLToJSON(Str)
-
+    private void createAndSendThroughTheSocket(String msg, String hostName, int portNumber, PrintWriter pout) {
+        try (
+                Socket socket = new Socket(hostName, portNumber);
+                BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream(), 2048);
+        ) {
+            out.write(fixedMagic.getBytes());
+            out.write(msg.getBytes("UTF-16LE").length);
+            out.write(msg.getBytes("UTF-16LE"));
+            pout.println("Data has been send though the socket");
+            LOG.info("Data has been send though the socket");
+        } catch (UnknownHostException e) {
+            LOG.error("There is a problem with end-point socket", e);
+            pout.println("There is a problem with end-point socket" + e.getMessage());
+        } catch (IOException e) {
+            LOG.error(e);
+            pout.println(e.getMessage());
+        }
+    }
 
 }
