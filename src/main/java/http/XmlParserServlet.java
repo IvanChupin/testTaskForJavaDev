@@ -21,7 +21,7 @@ import java.io.StringWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-@WebServlet("/")
+
 public class XmlParserServlet extends HttpServlet {
     private static final Logger LOG = LogManager.getLogger("HttpServletLogger");
     private String hostName;
@@ -48,9 +48,9 @@ public class XmlParserServlet extends HttpServlet {
                 "\n" +
                 "\t<h2>Insert your xml and press click button</h2>\n" +
                 "\n" +
-                "\t\t<form id=\"myForm\" name=\"xml\" method=\"post\">\n" +
+                "\t\t<form id=\"forma\" name=\"xml\" method=\"post\">\n" +
                 "\t\t  Paste your xml right here:<br>\n" +
-                "\t\t <textarea rows=\"10\" cols=\"80\" ></textarea>\n" +
+                "\t\t <textarea rows=\"10\" cols=\"80\" name=\"xml\" ></textarea>\n" +
                 "\t\t  <br><br>\n" +
                 "\t\t  <input type=\"submit\" value=\"click!\">\n" +
                 "\t\t</form> \n" +
@@ -73,6 +73,7 @@ public class XmlParserServlet extends HttpServlet {
         } else {
             try {
                 envelope = CustomParserXMLtoObj.convertXMLtoObject(xml, Envelope.class);
+                out.println(envelope.toString()+"<br>");
                 LOG.info("Converting to XML successful");
             } catch (JAXBException e) {
                 out.println("There is an exception while parsing your XML to Object <br> ");
@@ -85,8 +86,9 @@ public class XmlParserServlet extends HttpServlet {
             }
             if (envelope != null) {
                 try {
+                    LOG.info("CONVERTING TO JSON FROM OBJECT STARTED");
                     jsonString = new StringBuilder(JsonUtil.convertObjectToJSON(envelope));
-                    out.println("JSON successfully created" + jsonString);
+                    out.println("Your JSON looks like this: "+jsonString);
                     LOG.info(jsonString);
                     createAndSendThroughTheSocket(jsonString.toString(), hostName, portNumber, out);
                 } catch (IOException e) {
