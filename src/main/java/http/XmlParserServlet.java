@@ -1,7 +1,5 @@
 package http;
 
-
-import jdk.nashorn.internal.runtime.linker.Bootstrap;
 import model.Envelope;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -9,7 +7,6 @@ import service.CustomParserXMLtoObj;
 import service.JsonUtil;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,7 +70,7 @@ public class XmlParserServlet extends HttpServlet {
         } else {
             try {
                 envelope = CustomParserXMLtoObj.convertXMLtoObject(xml, Envelope.class);
-                out.println(envelope.toString()+"<br>");
+                out.println(envelope.toString() + "<br>");
                 LOG.info("Converting to XML successful");
             } catch (JAXBException e) {
                 out.println("There is an exception while parsing your XML to Object <br> ");
@@ -88,7 +85,7 @@ public class XmlParserServlet extends HttpServlet {
                 try {
                     LOG.info("CONVERTING TO JSON FROM OBJECT STARTED");
                     jsonString = new StringBuilder(JsonUtil.convertObjectToJSON(envelope));
-                    out.println("Your JSON looks like this: "+jsonString);
+                    out.println("Your JSON looks like this: " + jsonString);
                     LOG.info(jsonString);
                     createAndSendThroughTheSocket(jsonString.toString(), hostName, portNumber, out);
                 } catch (IOException e) {
@@ -116,7 +113,7 @@ public class XmlParserServlet extends HttpServlet {
             pout.println("There is a problem with end-point socket" + e.getMessage());
         } catch (IOException e) {
             LOG.error(e);
-            pout.println("<br>There is a problem sending to the socket: "+ e.getMessage());
+            pout.println("<br>There is a problem sending to the socket: " + e.getMessage());
         }
     }
 
