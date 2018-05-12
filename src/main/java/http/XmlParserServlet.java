@@ -116,7 +116,7 @@ public class XmlParserServlet extends HttpServlet {
             pout.println("There is a problem with end-point socket" + e.getMessage());
         } catch (IOException e) {
             LOG.error(e);
-            pout.println(e.getMessage());
+            pout.println("<br>There is a problem sending to the socket: "+ e.getMessage());
         }
     }
 
